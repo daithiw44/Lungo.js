@@ -66,8 +66,7 @@ LUNGO.Boot.Article = (function(lng, undefined) {
             article.append('<ul id="' + article_id + '_list"></ul>');
         }
     };
-
-    
+ 
     var _createScrollElement = function(scroll) {
         var scroll_id = scroll.attr('id');
         lng.View.Scroll.create(scroll_id);
