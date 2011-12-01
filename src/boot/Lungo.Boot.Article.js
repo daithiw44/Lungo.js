@@ -67,12 +67,13 @@ LUNGO.Boot.Article = (function(lng, undefined) {
         }
     };
 
+    
     var _createScrollElement = function(scroll) {
         var scroll_id = scroll.attr('id');
         lng.View.Scroll.create(scroll_id);
     };
 
-    var _b = function(checkbox) {
+    var _createCheckboxElement = function(checkbox) {
         checkbox.append('<span>&nbsp;</span>');
     };
 
@@ -81,4 +82,3 @@ LUNGO.Boot.Article = (function(lng, undefined) {
     };
 
 })(LUNGO);
-
