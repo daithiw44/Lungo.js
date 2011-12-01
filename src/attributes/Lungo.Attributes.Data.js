@@ -12,7 +12,7 @@ LUNGO.Attributes.Data = {
      search: {
          tag: 'search',
          selector: '.list',
-         html: '<li class="search {{value}}"><input type="search" placeholder="Search..."><a href="#" class="button" data-icon="search"></a></li>'
+         html: '<ul id="searchul_{{article_id}}_list"><li class="search {{value}}"><input type="search" id="search_{{article_id}}" placeholder="Search..."><a href="#" id="searchbtn_{{article_id}}" class="button" data-icon="search"></a></li></ul>'
      },
      icon: {
          tag: 'icon',
@@ -30,3 +30,4 @@ LUNGO.Attributes.Data = {
          html: '<a href="#back" data-target="section" class="back onleft button icon {{value}}"></a>'
      }
 };
+

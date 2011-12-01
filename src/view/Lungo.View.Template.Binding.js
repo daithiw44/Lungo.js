@@ -38,10 +38,17 @@ LUNGO.View.Template.Binding = (function(lng, undefined) {
 
     var dataAttribute = function(element, attribute) {
         var data = element.data(attribute.tag);
-
         if (data) {
+			if(attribute.tag === 'search'){
+				var regex;
+				regex = new RegExp(BINDING_START  + 'article_id' + BINDING_END, "g");
+				var html_binded = attribute.html.replace(regex, element.attr('id'));
+				html_binded = html_binded.replace(BINDING_START + 'value' + BINDING_END, data);
+			}
+			else{
             var html_binded = attribute.html.replace(BINDING_START + 'value' + BINDING_END, data);
-            element.prepend(html_binded);
+            }
+			element.prepend(html_binded);
         }
     };
 
