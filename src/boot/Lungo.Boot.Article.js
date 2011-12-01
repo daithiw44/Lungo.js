@@ -28,7 +28,7 @@ LUNGO.Boot.Article = (function(lng, undefined) {
         _initElement(SELECTORS.CHECKBOX_IN_ARTICLE, _createCheckboxElement);
     };
 
-    var _initElement = function(selector, callback) {
+   var _initElement = function(selector, callback) {
         var found_elements = lng.Dom.query(selector);
 
         for (var i = 0, len = found_elements.length; i < len; i++) {
@@ -37,13 +37,36 @@ LUNGO.Boot.Article = (function(lng, undefined) {
         }
     };
 
+	var _checkChildren = function (article){
+		var childCount = article.children().length;
+		var result = false;
+		switch (childCount){
+			case 0:
+				result = true;
+				break;
+			case 1:
+				//if the one ul is there assume its the search.
+				if(article[0].firstChild.nodeName === 'UL'){
+					result = true;
+				}
+				else{
+					result = false;
+				}
+				break;
+			default:
+				result = false;
+				break;
+		}
+		return result;
+	}
+
     var _createListElement = function(article) {
-        if (article.children().length === 0) {
+        if (_checkChildren(article) === true) {
             var article_id = article.attr('id');
             article.append('<ul id="' + article_id + '_list"></ul>');
         }
     };
-
+ 
     var _createScrollElement = function(scroll) {
         var scroll_id = scroll.attr('id');
         lng.View.Scroll.create(scroll_id);
