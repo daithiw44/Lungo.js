@@ -317,7 +317,12 @@ LUNGO.Events = (function(lng, undefined) {
             TOUCH_END: 'touchend',
             TAP: 'tap',
             DOUBLE_TAP: 'doubletap',
-            ORIENTATION_CHANGE: 'orientationchange'
+            ORIENTATION_CHANGE: 'orientationchange',
+			SWIPE:'swipe',
+			SWIPE_LEFT:'swipeLeft',
+			SWIPE_RIGHT:'swipeRight',
+			SWIPE_UP: 'swipeUp',
+			SWIPE_DOWN:'swipeDown'
         },
         desktop: {
             TOUCH_START: 'click',
@@ -329,9 +334,6 @@ LUNGO.Events = (function(lng, undefined) {
         }
     };
 
-    var current_environment = lng.Environment.current();
-    var current_events = EVENTS[current_environment];
-
     /**
      * Returns the touch event based on an enumeration of LungoJS
      * and the current environment
@@ -342,6 +344,8 @@ LUNGO.Events = (function(lng, undefined) {
      * @return {string} Touch event based on the current environment
      */
     var get = function(eventName) {
+		var current_environment = lng.Environment.current();
+		var current_events = EVENTS[current_environment];
         return current_events[eventName];
     };
 
@@ -1210,7 +1214,7 @@ LUNGO.Dom.Event = (function(lng, undefined) {
      * @param  {Function} Callback function after the request
      */
     var delegate = function(selector, children_selector, event_name, callback) {
-        if (_isNotSpecialEvent(selector, event_name, callback)) {
+       	if (typeof lng.Events.get(event_name) !== 'undefined') {
             lng.Dom.query(selector).delegate(children_selector, lng.Events.get(event_name), callback);
         }
     };
@@ -1242,22 +1246,10 @@ LUNGO.Dom.Event = (function(lng, undefined) {
         }, false);
     };
 
-    var _isNotSpecialEvent = function(selector, event_name, callback) {
-        var is_special_event = false;
-        /*
-        var SPECIAL_EVENTS = {
-            SWIPE: 'swipe',
-            SWIPE_LEFT: 'swipeLeft',
-            SWIPE_RIGHT: 'swipeRight',
-            SWIPE_UP: 'swipeUp',
-            SWIPE_DOWN: 'swipeDown',
-            DOUBLE_TAP: 'doubleTap'
-        };
-        var special_event = SPECIAL_EVENTS[event_name];
-        lng.Dom.query(selector)[special_event](callback);
+           lng.Dom.query(selector)[special_event](callback);
         */
 
-        switch(event_name) {
+       /* switch(event_name) {
             case 'SWIPE':
                 lng.Dom.query(selector).swipe(callback);
                 break;
@@ -1281,8 +1273,18 @@ LUNGO.Dom.Event = (function(lng, undefined) {
                 }
                 break;
             default:
+			}
+			*/
+			if(event_name === 'DOUBLE_TAP'){
+				  if (lng.Environment.isDesktop()) {
+                    lng.Dom.query(selector).live(lng.Events.get(event_name), callback);
+                } else {
+                    lng.Dom.query(selector).doubleTap(callback);
+                }
+
+			} else{
                 is_special_event = true;
-        }
+			}
 
         return is_special_event;
     };
@@ -1674,7 +1676,6 @@ LUNGO.Boot = (function(lng, undefined) {
 
     return function() {
         lng.Environment.start();
-
         lng.Boot.Layout.start();
         lng.Boot.Events.start();
         lng.Boot.Data.start();
