@@ -39,16 +39,16 @@ LUNGO.View.Template.Binding = (function(lng, undefined) {
     var dataAttribute = function(element, attribute) {
         var data = element.data(attribute.tag);
         if (data) {
-			if(attribute.tag === 'search'){
-				var regex;
-				regex = new RegExp(BINDING_START  + 'article_id' + BINDING_END, "g");
-				var html_binded = attribute.html.replace(regex, element.attr('id'));
-				html_binded = html_binded.replace(BINDING_START + 'value' + BINDING_END, data);
-			}
-			else{
+            if(attribute.tag === 'search'){
+                var regex;
+                regex = new RegExp(BINDING_START  + 'article_id' + BINDING_END, "g");
+                var html_binded = attribute.html.replace(regex, element.attr('id'));
+                html_binded = html_binded.replace(BINDING_START + 'value' + BINDING_END, data);
+            }
+            else{
             var html_binded = attribute.html.replace(BINDING_START + 'value' + BINDING_END, data);
             }
-			element.prepend(html_binded);
+            element.prepend(html_binded);
         }
     };
 
@@ -73,19 +73,63 @@ LUNGO.View.Template.Binding = (function(lng, undefined) {
     };
 
     var _bindProperties = function(element, template) {
-        var binding_field;
-        for (var property in element) {
-            if (lng.Core.isOwnProperty(element, property)) {
-                binding_field = new RegExp(BINDING_START + property + BINDING_END, 'g');
-                template = template.replace(binding_field, element[property]);
+        template.replace(BINDING_PARSER, function(tempString){ 
+            var n = tempString.replace(BINDING_START,'');
+            var o = n.replace(BINDING_END,'');
+            if(o.indexOf('.')=== -1 && o.indexOf('[')=== -1){
+                if(element.hasOwnProperty(o)){
+                    template = template.replace(tempString, element[o]);
+                }
+            }else{
+                try{
+                    var res = _objectPath(element,o)
+                    template = template.replace(tempString, res);
+                }
+                catch (ex) {
+                    template = template.replace(tempString, '');
+                }
             }
-        }
+        }); 
         return _removeNoBindedProperties(template);
     };
 
     var _removeNoBindedProperties = function(template) {
         return template.replace(BINDING_PARSER, '');
     };
+
+    var _objectPath = function(elObj,nstr) {
+        var obj = nstr.split('.');
+        var current = 0, res = elObj;
+        while(current < obj.length){
+            res =  _objectPathStep(res,_objectPathStepArr(obj[current]));
+            if(lng.Core.toType(res) ==='array'){
+                var pathArr = obj[current].split('[');
+                var num =+(pathArr[1].replace(']',''));
+                res = res[num];
+            }   
+            current++;
+        }
+        return res
+    }
+    
+    var _objectPathStep = function (parent, child){
+        if(parent.hasOwnProperty(child)){
+            return parent[child];
+        } else{
+            return ''
+        }
+    }
+
+    var _objectPathStepArr = function (path){
+        var returnPath;
+        if(path.indexOf('[') !== -1){
+            var pathArr = path.split('[');
+            returnPath =pathArr[0];
+        } else{
+            returnPath = path;
+        }
+        return returnPath;
+    }
 
     var _render = function(container_id, markup) {
         var container = lng.Dom.query('#' + container_id);

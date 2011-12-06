@@ -318,11 +318,11 @@ LUNGO.Events = (function(lng, undefined) {
             TAP: 'tap',
             DOUBLE_TAP: 'doubletap',
             ORIENTATION_CHANGE: 'orientationchange',
-			SWIPE:'swipe',
-			SWIPE_LEFT:'swipeLeft',
-			SWIPE_RIGHT:'swipeRight',
-			SWIPE_UP: 'swipeUp',
-			SWIPE_DOWN:'swipeDown'
+            SWIPE:'swipe',
+            SWIPE_LEFT:'swipeLeft',
+            SWIPE_RIGHT:'swipeRight',
+            SWIPE_UP: 'swipeUp',
+            SWIPE_DOWN:'swipeDown'
         },
         desktop: {
             TOUCH_START: 'click',
@@ -344,8 +344,8 @@ LUNGO.Events = (function(lng, undefined) {
      * @return {string} Touch event based on the current environment
      */
     var get = function(eventName) {
-		var current_environment = lng.Environment.current();
-		var current_events = EVENTS[current_environment];
+        var current_environment = lng.Environment.current();
+        var current_events = EVENTS[current_environment];
         return current_events[eventName];
     };
 
@@ -861,19 +861,63 @@ LUNGO.View.Template.Binding = (function(lng, undefined) {
     };
 
     var _bindProperties = function(element, template) {
-        var binding_field;
-        for (var property in element) {
-            if (lng.Core.isOwnProperty(element, property)) {
-                binding_field = new RegExp(BINDING_START + property + BINDING_END, 'g');
-                template = template.replace(binding_field, element[property]);
+        template.replace(BINDING_PARSER, function(tempString){ 
+            var n = tempString.replace(BINDING_START,'');
+            var o = n.replace(BINDING_END,'');
+            if(o.indexOf('.')=== -1 && o.indexOf('[')=== -1){
+                if(element.hasOwnProperty(o)){
+                    template = template.replace(tempString, element[o]);
+                }
+            }else{
+                try{
+                    var res = _objectPath(element,o)
+                    template = template.replace(tempString, res);
+                }
+                catch (ex) {
+                    template = template.replace(tempString, '');
+                }
             }
-        }
+        }); 
         return _removeNoBindedProperties(template);
     };
 
     var _removeNoBindedProperties = function(template) {
         return template.replace(BINDING_PARSER, '');
     };
+
+    var _objectPath = function(elObj,nstr) {
+        var obj = nstr.split('.');
+        var current = 0, res = elObj;
+        while(current < obj.length){
+            res =  _objectPathStep(res,_objectPathStepArr(obj[current]));
+            if(lng.Core.toType(res) ==='array'){
+                var pathArr = obj[current].split('[');
+                var num =+(pathArr[1].replace(']',''));
+                res = res[num];
+            }   
+            current++;
+        }
+        return res
+    }
+    
+    var _objectPathStep = function (parent, child){
+        if(parent.hasOwnProperty(child)){
+            return parent[child];
+        } else{
+            return ''
+        }
+    }
+
+    var _objectPathStepArr = function (path){
+        var returnPath;
+        if(path.indexOf('[') !== -1){
+            var pathArr = path.split('[');
+            returnPath =pathArr[0];
+        } else{
+            returnPath = path;
+        }
+        return returnPath;
+    }
 
     var _render = function(container_id, markup) {
         var container = lng.Dom.query('#' + container_id);
@@ -904,7 +948,7 @@ LUNGO.View.Template.List = (function(lng, undefined) {
 
     /**
      * Create a list based DataBind with a configuration object for an element <article>
-	 * if the config has a 'norecords' property it will display the norecords markup rather than nothing.
+     * if the config has a 'norecords' property it will display the norecords markup rather than nothing.
      *
      * @method create
      *
@@ -920,7 +964,7 @@ LUNGO.View.Template.List = (function(lng, undefined) {
             _render();
             _createScroll();
         }
-	};
+    };
 
     var _validateConfig = function() {
         var checked = false;
@@ -1218,7 +1262,7 @@ LUNGO.Dom.Event = (function(lng, undefined) {
      * @param  {Function} Callback function after the request
      */
     var delegate = function(selector, children_selector, event_name, callback) {
-       	if (typeof lng.Events.get(event_name) !== 'undefined') {
+        if (typeof lng.Events.get(event_name) !== 'undefined') {
             lng.Dom.query(selector).delegate(children_selector, lng.Events.get(event_name), callback);
         }
     };
@@ -1250,9 +1294,9 @@ LUNGO.Dom.Event = (function(lng, undefined) {
         }, false);
     };
 
-           lng.Dom.query(selector)[special_event](callback);
-        */
-
+    var _isNotSpecialEvent = function(selector, event_name, callback) {
+        var is_special_event = false;
+           
        /* switch(event_name) {
             case 'SWIPE':
                 lng.Dom.query(selector).swipe(callback);
@@ -1277,18 +1321,18 @@ LUNGO.Dom.Event = (function(lng, undefined) {
                 }
                 break;
             default:
-			}
-			*/
-			if(event_name === 'DOUBLE_TAP'){
-				  if (lng.Environment.isDesktop()) {
+            }
+            */
+            if(event_name === 'DOUBLE_TAP'){
+                  if (lng.Environment.isDesktop()) {
                     lng.Dom.query(selector).live(lng.Events.get(event_name), callback);
                 } else {
                     lng.Dom.query(selector).doubleTap(callback);
                 }
 
-			} else{
+            } else{
                 is_special_event = true;
-			}
+            }
 
         return is_special_event;
     };
@@ -1501,7 +1545,7 @@ LUNGO.Data.Sql = (function(lng, undefined) {
             for (var i = 0, len = rs.rows.length; i < len; i++) {
                 result.push(rs.rows.item(i));
             }
-			if (result.length === 1) result = result[0];
+            if (result.length === 1) result = result[0];
 
             _callbackResponse(callback, result);
         });
