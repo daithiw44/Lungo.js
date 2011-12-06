@@ -26,7 +26,7 @@ LUNGO.Events = (function(lng, undefined) {
 			SWIPE_DOWN:'swipeDown'
         },
         desktop: {
-            TOUCH_START: 'mousedown',
+            TOUCH_START: 'click',
             TOUCH_MOVE: 'mousemove',
             TOUCH_END: 'mouseup',
             TAP: 'click',

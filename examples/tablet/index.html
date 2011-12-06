@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>LungoJS - Test Source 1.0.2</title>
+    <title>LungoJS - Aside Demo</title>
     <meta name="description" content="">
     <meta name="author" content="Javier Jiménez Villar (@soyjavi)">
     <!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
@@ -33,20 +33,26 @@
 </head>
 
 <body class="app">
-
-	<section id="demo" class="_static">
-		<header>
-            <a href="#" id="btnAside" data-target="aside" class="button pink onleft" data-icon="note"></a>
+    <section id="demo" class="_static">
+        <header data-title="Tablet Demo">
+            <a href="#" class="button onleft aside" data-target="aside" data-icon="note"></a>
+            <a href="#settings" data-target="section" class="button onright" data-icon="config"></a>
         </header>
+
         <aside>
-            <a href="#main" data-target="article" data-icon="facebook">Facebook</a>
-            <a href="#second" data-target="article" data-icon="twitter">Twitter</a>
-            <a href="#main" data-target="article" data-icon="picture">Flickr</a>
-            <a href="#main" data-target="article" data-icon="cloudup">Upload by ...</a>
-            <a href="#main" data-target="article" data-icon="user">Connect with facebook</a>
-            <a href="#main" data-target="article" data-icon="music">Download music</a>
-            <a href="#main" data-target="article" data-icon="key">Logout</a>
+            <scroll id="aside_scroll">
+                <div>
+            <a href="#main" data-target="article" data-icon="note" data-title="Facebook">Facebook</a>
+            <a href="#second" data-target="article" data-icon="twitter" data-title="Twitter">Twitter</a>
+            <a href="#" data-icon="picture">Flickr</a>
+            <a href="#" data-icon="cloudup">Upload by ...</a>
+            <a href="#" data-icon="user">Connect with facebook</a>
+            <a href="#" data-icon="music">Download music</a>
+            <a href="#" data-icon="key">Logout</a>
+                </div>
+            </scroll>
         </aside>
+
 		<article id="main" class="list">
             <scroll id="main_scroll">
                 <ul>
@@ -73,10 +79,30 @@
 			</scroll>
         </article>
 
-        <article id="second">
-            second
-        </article>
+        <article id="second"></article>
     </section>
+
+    <section id="settings">
+        <header data-back="home" data-title="Settings">
+            <nav class="onright">
+                <a href="#settings_main" data-target="article" class="current" data-title="Settings" data-icon="user"></a>
+                <a href="#settings_second" data-target="article" data-title="Chat" data-icon="chat"></a>
+                <a href="#settings_third" data-target="article" data-title="Share Methods" data-icon="earth"></a>
+            </nav>
+        </header>
+
+        <article id="settings_main">s</article>
+        <article id="settings_second">s</article>
+        <article id="settings_third">s</article>
+
+        <footer class="toolbar">
+            <nav>
+                <a href="#" class="current" data-icon="substract"></a>
+                <a href="#" class="current" data-icon="add"></a>
+            </nav>
+        </footer>
+    </section>
+
 
     <!-- Third parties dependencies -->
     <script src="../../src/lib/zepto.js"></script>
